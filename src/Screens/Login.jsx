@@ -4,26 +4,48 @@ import React, {useState} from 'react';
 import CommonButton from '../common/CommonButton';
 import {useNavigation} from '@react-navigation/native';
 import CustomInput from '../common/CustumInput';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [badEmail, setBadEmail] = useState(false);
   const [badpassword, setBadPassword] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
     const validate = () => {
+      setModalVisible(true);
     if (email === '') {
       setBadEmail(true);
+      setModalVisible(false);
     } else {
       setBadEmail(false);
     }
 
     if (password === '') {
       setBadPassword(true);
+      setModalVisible(false);
     } else {
-      setBadPassword(false);
+      setTimeout(() => {
+        setBadPassword(false);
+        getData()
+      }, 2000);
+     
     }
     }
+
+    const getData = async () => {
+      const mEmail = await AsyncStorage.getItem('EMAIL');
+      const mPass = await AsyncStorage.getItem('PASSWORD');
+      console.log(mEmail, mPass);
+      if (email === mEmail && mPass === password) {
+        setModalVisible(false);
+        navigation.navigate('Home');
+      } else {
+        setModalVisible(false);
+        alert('enter valid Email & Password');
+      }
+    };
 
   const navigation = useNavigation();
 
